@@ -1,0 +1,46 @@
+<div class="container">
+    <div class="row">
+        <h1>Nossos empregados</h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td colspan="4">
+                    <div class="row">
+                        <div class="col-2 col-md-1">
+                            <button class="btn btn-primary" (click)="openNewModal()" title="Novo empregado">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-9 col-md-11">
+                            <employee-search (onSearch)="handleSearch($event)"></employee-search>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th [sortColumn]="sortColumn" columnName="name" (onSort)="handleSort($event)">Nome</th>
+                <th [sortColumn]="sortColumn" columnName="salary" (onSort)="handleSort($event)">Salário</th>
+                <th>Bônus</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--<tr *ngFor="let employee of employees | employeeFilter: search | order: sortColumn| paginate: pagination">-->
+            <tr *ngFor="let employee of employees| paginate: pagination"> <!-- {data: []} -->
+                <td>
+                    <a href="javascript:void(0);" (click)="openDetailModal(employee)">
+                        {{employee.name}}
+                    </a>
+                </td>
+                <td [innerHTML]="employee.salary | myCurrency" [salaryColor]="employee.salary"></td>
+                <td>{{employee.bonus}}</td>
+                <td>
+                    <a href="javascript:void(0)" (click)="openEditModal(employee)">Editar</a> |
+                    <a href="javascript:void(0)" (click)="openDestroyModal(employee)">Excluir</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <pagination-controls previousLabel="Anterior" nextLabel="Próximo" (pageChange)="handlePagination($event)"></pagination-controls>
+    </div>
+</div>
