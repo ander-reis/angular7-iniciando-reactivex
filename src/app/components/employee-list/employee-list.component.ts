@@ -26,6 +26,13 @@ export class EmployeeListComponent implements OnInit {
         totalItems: 0
     };
 
+    columns = [
+        {name: 'name', label: 'Nome', order: true},
+        {name: 'salary', label: 'Salário', order: true},
+        {label: 'Bonus'},
+        {label: 'Ações'},
+    ];
+
     constructor(
         private modalService: ModalService, private employeeHttp: EmployeeHttpService,
         private notifyMessage: NotifyMessageService) {
