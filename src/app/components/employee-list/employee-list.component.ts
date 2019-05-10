@@ -108,8 +108,6 @@ export class EmployeeListComponent implements OnInit {
             .subscribe(response => { //{ data: [], pagination: {total: 9, current_page: 2} }
                 this.pagination.totalItems = +response.headers.get('X-Total-Count');
                 this.employees = response.body; //{data: []}
-                console.log('primeiro');
-                console.log(this.employees[0].name);
             });
             // }, (responseError: HttpErrorResponse) => {
             //     if (responseError.status === 404) {

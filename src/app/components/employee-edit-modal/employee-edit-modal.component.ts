@@ -17,6 +17,7 @@ export class EmployeeEditModalComponent implements OnInit {
         salary: 1,
         bonus: 0
     };
+    error: boolean = false;
 
     constructor(private employeeHttp: EmployeeHttpService, private modalRef: ModalRefService, private notifyMessage: NotifyMessageService) {
         this.employeeId = this.modalRef.context['employeeId'];
@@ -24,7 +25,10 @@ export class EmployeeEditModalComponent implements OnInit {
 
     ngOnInit() {
         this.employeeHttp.get(this.employeeId)
-            .subscribe(data => this.employee = data); //{name, salary, bonus}
+            .subscribe(
+                data => this.employee = data,
+                () => this.error = true
+            );
     }
 
     editEmployee(event) {

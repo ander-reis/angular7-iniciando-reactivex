@@ -46,6 +46,10 @@ export class EmployeeHttpService {
 
     get(id: number): Observable<Employee> {
         return this.http.get<Employee>(`${this.baseUrl}/${id}`)
+
+        // teste de error para recurso não encontrado
+        // return this.http.get<Employee>(`${this.baseUrl}/1000`)
+
             .pipe(
                 catchError((responseError) => this.handleError(responseError))
             );
@@ -79,9 +83,16 @@ export class EmployeeHttpService {
             // client-side error
             errorMessage = `Erro: ${error.error.message}`;
         } else {
-            //422
+            // 422
             // backend-side error
-            errorMessage = `Erro: código - ${error.status}<br>, Mensagem: ${error.message}`;
+            switch (error.status) {
+                case 404:
+                    errorMessage = 'Recurso não econtrado';
+                    break;
+                default:
+                    errorMessage = `Erro: código - ${error.status}<br>, Mensagem: ${error.message}`;
+                    break;
+            }
         }
         this.notifyMessage.error('Não foi possível realizar a operação', errorMessage);
         return throwError(error);

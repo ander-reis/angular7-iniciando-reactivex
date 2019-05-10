@@ -43,6 +43,9 @@
                     <a href="javascript:void(0)" (click)="openDestroyModal(employee)">Excluir</a>
                 </td>
             </tr>
+            <tr *ngIf="!employees.length">
+                <td [colSpan]="columns.length" style="text-align: center">Nenhum registro encontrado</td>
+            </tr>
             </tbody>
         </table>
         <pagination-controls previousLabel="Anterior" nextLabel="Próximo" (pageChange)="handlePagination($event)"></pagination-controls>
