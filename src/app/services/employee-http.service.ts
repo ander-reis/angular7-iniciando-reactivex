@@ -1,17 +1,20 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpParams, HttpResponse} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 import {Employee} from '../models';
 import {Observable, throwError} from 'rxjs';
 import {NotifyMessageService} from './notify-message.service';
-import {catchError} from 'rxjs/operators';
+import {catchError, map, tap, first, take} from 'rxjs/operators';
 
 interface ListHttpParams {
     search;
     sort: { column, sort };
-    pagination: {
-        page: number;
-        perPage: number;
-    };
+    pagination: Pagination;
+}
+
+interface Pagination {
+    page: number,
+    perPage: number,
+    total?: number
 }
 
 @Injectable({
@@ -24,7 +27,7 @@ export class EmployeeHttpService {
     constructor(private http: HttpClient, private notifyMessage: NotifyMessageService) {
     }
 
-    list({search, sort, pagination}: ListHttpParams): Observable<HttpResponse<Employee[]>> {
+    list({search, sort, pagination}: ListHttpParams): Observable<{data: Employee[], meta: Pagination}> {
         let filterObj = {
             _sort: sort.column,
             _order: sort.sort,
@@ -40,6 +43,25 @@ export class EmployeeHttpService {
         });
         return this.http.get<Employee[]>(this.baseUrl, {params, observe: 'response'})
             .pipe(
+                /**
+                 * finaliza observable e o retira da memória
+                 */
+                first(),
+                /**
+                 *finaliza observable e o retira da memória
+                 */
+                // take(1),
+                map(response => {
+                    return {
+                        data: response.body,
+                        meta: {
+                            page: pagination.page,
+                            perPage: pagination.perPage,
+                            total: +response.headers.get('X-Total-Count')
+                        }
+                    };
+                }),
+                tap(console.log),
                 catchError((responseError) => this.handleError(responseError))
             );
     }
@@ -51,6 +73,7 @@ export class EmployeeHttpService {
         // return this.http.get<Employee>(`${this.baseUrl}/1000`)
 
             .pipe(
+                first(),
                 catchError((responseError) => this.handleError(responseError))
             );
     }
@@ -58,6 +81,7 @@ export class EmployeeHttpService {
     create(data: Employee): Observable<Employee> {
         return this.http.post<Employee>(this.baseUrl, data)
             .pipe(
+                first(),
                 catchError((responseError) => this.handleError(responseError))
             );
     }
@@ -65,6 +89,7 @@ export class EmployeeHttpService {
     update(data: Employee): Observable<Employee> {
         return this.http.put<Employee>(`${this.baseUrl}/${data.id}`, data)
             .pipe(
+                first(),
                 catchError((responseError) => this.handleError(responseError))
             );
     }
@@ -72,6 +97,7 @@ export class EmployeeHttpService {
     delete(id: number): Observable<any> {
         return this.http.delete(`${this.baseUrl}/${id}`)
             .pipe(
+                first(),
                 catchError((responseError) => this.handleError(responseError))
             );
     }

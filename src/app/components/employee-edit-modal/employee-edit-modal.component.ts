@@ -23,12 +23,17 @@ export class EmployeeEditModalComponent implements OnInit {
         this.employeeId = this.modalRef.context['employeeId'];
     }
 
-    ngOnInit() {
-        this.employeeHttp.get(this.employeeId)
+    async ngOnInit() {
+        try {
+            this.employee = await this.employeeHttp.get(this.employeeId).toPromise();
+        }catch (e) {
+            this.error = true;
+        }
+            /*this.employeeHttp.get(this.employeeId)
             .subscribe(
                 data => this.employee = data,
                 () => this.error = true
-            );
+            );*/
     }
 
     editEmployee(event) {

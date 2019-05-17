@@ -6,7 +6,6 @@ import {ModalService} from '../modal-dynamic/modal.service';
 import {EmployeeDeleteModalComponent} from '../employee-delete-modal/employee-delete-modal.component';
 import {EmployeeDetailModalComponent} from '../employee-detail-modal/employee-detail-modal.component';
 import {EmployeeHttpService} from '../../services/employee-http.service';
-import {HttpErrorResponse} from '@angular/common/http';
 import {NotifyMessageService} from '../../services/notify-message.service';
 
 
@@ -105,38 +104,11 @@ export class EmployeeListComponent implements OnInit {
                 perPage: this.pagination.itemsPerPage
             }
         })
-            .subscribe(response => { //{ data: [], pagination: {total: 9, current_page: 2} }
-                this.pagination.totalItems = +response.headers.get('X-Total-Count');
-                this.employees = response.body; //{data: []}
+            .subscribe(data => {
+                this.pagination.totalItems = data.meta.total;
+                this.pagination.itemsPerPage = data.meta.perPage;
+                this.pagination.currentPage = data.meta.page;
+                this.employees = data.data; //{data: []}
             });
-            // }, (responseError: HttpErrorResponse) => {
-            //     if (responseError.status === 404) {
-            //         this.notifyMessage.error('Erro', 'Recurso não encontrado');
-            //     }
-            //
-            //
-            // });
-        console.log('segundo');
     }
 }
-
-// //pure function
-// function soma(param1, param2) {
-//     return param1 + param2;
-// }
-//
-// soma(1, 2); //3
-// soma(1, 2); //3
-//
-// //impure function
-// const contador = function () {
-//     let count = 0;
-//     return function (valor) {
-//         return count += valor;
-//     };
-// }();
-//
-// contador(1); //1
-// contador(1); //2
-// contador(1); //3
-// contador(1);

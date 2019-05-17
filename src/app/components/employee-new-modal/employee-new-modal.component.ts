@@ -5,6 +5,7 @@ import {ModalRefService} from '../modal-dynamic/modal-ref.service';
 import {NotifyMessageService} from '../../services/notify-message.service';
 import {Employee} from '../../models';
 import {EmployeeHttpService} from '../../services/employee-http.service';
+import {subscribeOn} from 'rxjs/operators';
 
 @Component({
     selector: 'employee-new-modal',
@@ -25,6 +26,8 @@ export class EmployeeNewModalComponent implements OnInit, OnDestroy {
     @ViewChild('inputSalary', {read: InputDirective})
     inputName: InputDirective;//ElementRef
 
+    unSubscribeOnShow;
+
     constructor(private employeeHttp: EmployeeHttpService,
                 private employeeService: EmployeeService,
                 private modalRef: ModalRefService,
@@ -32,7 +35,7 @@ export class EmployeeNewModalComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.modalRef.onShow.subscribe(() => {
+        this.unSubscribeOnShow = this.modalRef.onShow.subscribe(() => {
             console.log(this.inputName);
             this.inputName.focus();
         });
@@ -50,5 +53,6 @@ export class EmployeeNewModalComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         console.log('employee new modal destruído');
+        this.unSubscribeOnShow.unsubscribe();
     }
 }
